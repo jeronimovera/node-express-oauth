@@ -57,7 +57,6 @@ Your code here
 app.get('/authorize', (req, res) => {
     const clientId = req.query.client_id;
     const client = clients[clientId];
-    const scopes = req.query.scopes.split(' ');
     if (!client) {
         res.status(401).send('Error: client not authorized');
         return;
@@ -70,8 +69,7 @@ app.get('/authorize', (req, res) => {
         return;
     }
     const requestId = randomString();
-    requests[requestId] = requestId;
-
+    requests[requestId] = req.query;
     res.render('login', {
         client,
         scope: req.query.scope,
