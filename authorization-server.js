@@ -79,8 +79,8 @@ app.get('/authorize', (req, res) => {
 
 app.post('/approve', (req, res) => {
     const { userName, password, requestId } = req.body;
-    if (users[userName] !== password) {
-        res.status(401).send('Error: wrong username or password');
+    if (!userName || users[userName] !== password) {
+        res.status(401).send('Error: user not authorized');
         return;
     }
     const clientReq = requests[requestId];
@@ -89,10 +89,8 @@ app.post('/approve', (req, res) => {
         res.status(401).send('Error: invalid user request');
         return;
     }
-
-    code = randomString();
+    const code = randomString();
     authorizationCodes[code] = { clientReq, userName };
-
     const redirectUri = url.parse(clientReq.redirect_uri);
     redirectUri.query = {
         code,
